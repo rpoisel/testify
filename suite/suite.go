@@ -3,6 +3,7 @@ package suite
 import (
 	"flag"
 	"fmt"
+	"math/rand"
 	"os"
 	"reflect"
 	"regexp"
@@ -96,7 +97,14 @@ func Run(t *testing.T, suite TestingSuite) {
 	methodFinder := reflect.TypeOf(suite)
 	suiteName := methodFinder.Elem().Name()
 
+	indices := make([]int, methodFinder.NumMethod())
 	for i := 0; i < methodFinder.NumMethod(); i++ {
+		indices[i] = i
+	}
+	rand.Shuffle(len(indices), func(i, j int) { indices[i], indices[j] = indices[j], indices[i] })
+
+	// for i := 0; i < methodFinder.NumMethod(); i++ {
+	for _, i := range indices {
 		method := methodFinder.Method(i)
 
 		ok, err := methodFilter(method.Name)
